@@ -31,6 +31,7 @@ import { AuthProvider, useAuth } from './auth/auth-context';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { PWAInstallBanner } from './components/pwa/PWAInstallBanner';
+import { normalizeAppPath, buildExternalUrl } from './lib/router-utils';
 
 // 1. Layouts
 import { PublicLayout } from './layouts/PublicLayout';
@@ -168,12 +169,12 @@ const MainRoutingManager: React.FC = () => {
   const { currentUser, isAuthenticated, logout } = useAuth();
   const { success } = useToast();
 
-  // Estado Central de Rota
+  // Estado Central de Rota (Normalizado para suportar GitHub Pages e subdirectórios)
   const [currentPath, setCurrentPath] = useState<string>(() => {
-    if (typeof window !== 'undefined' && window.location.pathname) {
-      return window.location.pathname;
+    if (typeof window !== 'undefined') {
+      return normalizeAppPath(window.location.pathname, window.location.hash);
     }
-    return '/painel';
+    return '/';
   });
 
   const [isNewBudgetModalOpen, setIsNewBudgetModalOpen] = useState(false);
@@ -182,16 +183,21 @@ const MainRoutingManager: React.FC = () => {
   // Gestão de Bloqueio por Falta de Créditos de Pacotes
   const [isQuotaExceededModalOpen, setIsQuotaExceededModalOpen] = useState(false);
 
-  // Navegação universal com sincronização do histórico do navegador
+  // Navegação universal com sincronização do histórico do navegador e suporte a subdirectórios
   const navigateTo = useCallback((path: string) => {
-    if (typeof window !== 'undefined' && window.location.pathname !== path) {
+    const normalizedTarget = normalizeAppPath(path);
+    const externalUrl = buildExternalUrl(normalizedTarget);
+    if (typeof window !== 'undefined') {
       try {
-        window.history.pushState({}, '', path);
+        if (window.location.pathname + window.location.search !== externalUrl) {
+          window.history.pushState({}, '', externalUrl);
+        }
       } catch (e) {
         // Fallback para sandbox/iframe
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    setCurrentPath(path);
+    setCurrentPath(normalizedTarget);
   }, []);
 
   // Abre o Wizard guiado de 7 etapas a partir de um novo projectId
@@ -231,15 +237,20 @@ const MainRoutingManager: React.FC = () => {
     navigateTo(`/wizard/${newProjectId}/etapa-1`);
   }, [navigateTo]);
 
-  // Listener para botões retroceder/avançar do navegador
+  // Listener para botões retroceder/avançar do navegador e mudanças de hash
   useEffect(() => {
-    const handlePopState = () => {
+    const handleLocationChange = () => {
       if (typeof window !== 'undefined') {
-        setCurrentPath(window.location.pathname || '/painel');
+        const nextPath = normalizeAppPath(window.location.pathname, window.location.hash);
+        setCurrentPath(nextPath);
       }
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, []);
 
   // 3.3 SEO Dinâmico: Aplica <meta name="robots" content="noindex, nofollow"> em rotas privadas, wizard e previews
