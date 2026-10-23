@@ -1,0 +1,64 @@
+{
+  "id": "/",
+  "name": "Kizongelu - Orçamentação e Mapas de Quantidades para Angola",
+  "short_name": "Kizongelu",
+  "description": "Plataforma SaaS de orçamentação e mapas de quantidades para obras em Angola com motor de cálculo determinístico.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F3D5C",
+  "theme_color": "#0F3D5C",
+  "categories": ["business", "productivity", "utilities"],
+  "lang": "pt-AO",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Novo Orçamento",
+      "short_name": "Novo",
+      "description": "Criar novo orçamento de obra rapidamente",
+      "url": "/painel?action=novo-orcamento",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Os Meus Projetos",
+      "short_name": "Projetos",
+      "description": "Consultar lista de obras e orçamentos",
+      "url": "/projetos",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Preços de Materiais",
+      "short_name": "Preços",
+      "description": "Observatório de preços de construção em Angola",
+      "url": "/precos-angola",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-primary: #0F3D5C;
+    --color-primary-light: #1A547C;
+    --color-primary-dark: #0A293E;
+    --color-cta: #F59E0B;
+    --color-cta-hover: #D97706;
+    --color-whatsapp: #25D366;
+    --color-whatsapp-hover: #1EBE5D;
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    --color-bg: #F8FAFC;
+    --color-border: #E2E8F0;
+    --color-text-muted: #64748B;
+    --color-text-main: #0F172A;
+
+    /* Shadcn & System Variables */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 204 72% 21%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 204 72% 21%;
+    --radius: 0.75rem;
+  }
+
+  :root.dark,
+  html.dark {
+    --color-primary: #38BDF8;
+    --color-primary-light: #7DD3FC;
+    --color-primary-dark: #0284C7;
+    --color-cta: #F59E0B;
+    --color-cta-hover: #D97706;
+    --color-bg: #0B132B;
+    --color-border: #1E293B;
+    --color-text-muted: #94A3B8;
+    --color-text-main: #F8FAFC;
+
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 199 89% 48%;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background-color 200ms ease, color 200ms ease;
+  }
+
+  /* Acessibilidade WCAG 2.1 AA: Foco visível consistente */
+  :focus-visible {
+    outline: 2px solid #0F3D5C;
+    outline-offset: 2px;
+  }
+  .dark :focus-visible {
+    outline: 2px solid #F59E0B;
+    outline-offset: 2px;
+  }
+
+  /* Skip to main content link para leitores de ecrã e navegação por teclado */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 16px;
+    z-index: 9999;
+    padding: 12px 20px;
+    background: #0F3D5C;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transition: top 150ms ease-in-out;
+  }
+  .skip-link:focus {
+    top: 16px;
+  }
+}
+
+/* Utilitários específicos do Design System Kizongelu */
+.border-card-subtle {
+  border: 1px solid #E2E8F0;
+}
+
+.shadow-card-subtle {
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+}
+
+/* Micro-interacções — Secção 5.4 */
+/* Hover em cards: elevação leve (shadow-sm -> shadow-md, 150ms) */
+.card-interactive {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: box-shadow 150ms ease-in-out, transform 150ms ease-in-out;
+}
+.card-interactive:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover em botões: mudança de tom (5% mais escuro) */
+.btn-darken {
+  transition: filter 150ms ease-in-out, background-color 150ms ease-in-out;
+}
+.btn-darken:hover {
+  filter: brightness(0.95);
+}
+
+/* Toque em mobile: escala 0.98 durante 100ms */
+.btn-mobile-touch,
+.touch-scale {
+  transition: transform 100ms ease-in-out;
+}
+.btn-mobile-touch:active,
+.touch-scale:active {
+  transform: scale(0.98);
+}
+
+/* Transições de página: fade 200ms (nunca slide elaborado) */
+.page-fade-in {
+  animation: pageFadeIn 200ms ease-out forwards;
+  will-change: opacity;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Skeleton Loading com Shimmer Suave Laranja (1.6s loop) — Secção 5.3 */
+@keyframes orangeShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-shimmer-orange {
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 0%,
+    #fef3c7 40%,
+    #fed7aa 50%,
+    #fef3c7 60%,
+    #f1f5f9 100%
+  );
+  background-size: 200% 100%;
+  animation: orangeShimmer 1.6s infinite ease-in-out;
+}
+
+/* Otimização Mobile-First para Android: Scroll suave e ocultação de scrollbars ruidosas */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Regras Mobile-First Rigorosas (Android gama média: Samsung A-series, Tecno, Infinix, Redmi) */
+/* Botões primários: 56px altura em mobile */
+.btn-primary-mobile {
+  min-height: 56px;
+}
+@media (min-width: 640px) {
+  .btn-primary-mobile {
+    min-height: 44px;
+  }
+}
+
+/* Botões secundários: 48px altura em mobile */
+.btn-secondary-mobile {
+  min-height: 48px;
+}
+@media (min-width: 640px) {
+  .btn-secondary-mobile {
+    min-height: 40px;
+  }
+}
+
+/* Inputs: 48px altura em mobile, font-size 16px para evitar auto-zoom no Android */
+.input-mobile-standard {
+  min-height: 48px;
+  font-size: 16px;
+}
+@media (min-width: 640px) {
+  .input-mobile-standard {
+    min-height: 42px;
+    font-size: 14px;
+  }
+}
+
+/* Prevenção de auto-zoom em inputs em dispositivos Android / WebViews */
+@media (max-width: 640px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+.safe-area-bottom {
+  padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+}
+
+

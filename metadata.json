@@ -1,0 +1,6 @@
+{
+  "name": "Kizongelu",
+  "description": "Plataforma SaaS de orçamentação e mapas de quantidades para obras em Angola com motor de cálculo determinístico.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

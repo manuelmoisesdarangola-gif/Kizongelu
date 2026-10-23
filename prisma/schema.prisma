@@ -1,0 +1,547 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// ENUMS DO DOMÍNIO Kizongelu IA
+// ==========================================
+
+enum UserRole {
+  PARTICULAR
+  PROFESSIONAL
+  COMPANY_OWNER
+  COMPANY_ADMIN
+  COMPANY_MEMBER
+  ADMIN
+}
+
+enum ProjectType {
+  NOVA
+  AMPLIACAO
+  REMODELACAO
+  REABILITACAO
+  MURO
+  ANEXO
+  OUTRA
+}
+
+enum ProjectStatus {
+  DRAFT
+  COMPLETED
+  UNLOCKED
+  ARCHIVED
+}
+
+enum MaterialCategory {
+  CIMENTO
+  AREIA
+  BRITA
+  BLOCOS
+  ACO
+  MADEIRA
+  COBERTURA
+  CERAMICA
+  TINTA
+  TUBOS
+  CABOS
+  EQUIPAMENTOS
+  MAO_OBRA
+  TRANSPORTE
+  OUTROS
+}
+
+enum PaymentStatus {
+  PENDING
+  PROOF_RECEIVED
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  RENEWING
+  OVERDUE
+  SUSPENDED
+  CANCELLED
+  EXPIRED
+}
+
+enum PackageStatus {
+  PENDING_PAYMENT
+  ACTIVE
+  EXHAUSTED
+  EXPIRED
+  CANCELLED
+}
+
+enum EngineVersionStatus {
+  DRAFT
+  TESTED
+  ACTIVE
+  ARCHIVED
+}
+
+enum ConfidenceLevel {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+  PUSH
+  WHATSAPP
+  SMS
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  READ
+  FAILED
+}
+
+enum InvoiceStatus {
+  ISSUED
+  PAID
+  VOID
+}
+
+// ==========================================
+// ENTIDADES DO SISTEMA
+// ==========================================
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  phone        String
+  passwordHash String
+  role         UserRole  @default(PARTICULAR)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  companiesOwned Company[]        @relation("CompanyOwner")
+  companyMembers CompanyMember[]
+  projects       Project[]
+  payments       Payment[]
+  subscriptions  Subscription[]
+  packages       Package[]
+  invoices       Invoice[]
+  notifications  Notification[]
+  sessions       Session[]
+  auditLogs      AuditLog[]       @relation("AdminAudits")
+
+  @@index([email])
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  nif       String
+  province  String
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner   User            @relation("CompanyOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members CompanyMember[]
+  projects Project[]
+
+  @@index([ownerId])
+}
+
+model CompanyMember {
+  id        String   @id @default(uuid())
+  companyId String
+  userId    String
+  role      UserRole @default(COMPANY_MEMBER)
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, userId])
+  @@index([userId])
+}
+
+model Project {
+  id           String        @id @default(uuid())
+  userId       String
+  companyId    String?
+  name         String
+  type         ProjectType
+  province     String
+  municipality String?
+  status       ProjectStatus @default(DRAFT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company      Company?      @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  input        ProjectInput?
+  calculations Calculation[]
+  documents    Document[]
+  payments     Payment[]
+
+  @@index([userId])
+  @@index([companyId])
+}
+
+model ProjectInput {
+  id          String    @id @default(uuid())
+  projectId   String    @unique
+  data        Json
+  wizardStep  Int       @default(1)
+  completedAt DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Material {
+  id       String           @id @default(uuid())
+  code     String           @unique
+  name     String
+  category MaterialCategory
+  unit     String
+  active   Boolean          @default(true)
+
+  prices Price[]
+}
+
+model Price {
+  id           String    @id @default(uuid())
+  materialId   String
+  province     String
+  municipality String?
+  price        Decimal   @db.Decimal(14, 2)
+  source       String
+  validFrom    DateTime  @default(now())
+  active       Boolean   @default(true)
+  createdBy    String
+
+  material Material       @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  history  PriceHistory[]
+
+  @@index([materialId, province])
+}
+
+model PriceHistory {
+  id        String   @id @default(uuid())
+  priceId   String
+  oldPrice  Decimal  @db.Decimal(14, 2)
+  newPrice  Decimal  @db.Decimal(14, 2)
+  changedBy String
+  changedAt DateTime @default(now())
+  reason    String?
+
+  price Price @relation(fields: [priceId], references: [id], onDelete: Cascade)
+
+  @@index([priceId])
+}
+
+model ProvinceFactor {
+  id        String   @id @default(uuid())
+  province  String   @unique
+  factor    Decimal  @db.Decimal(5, 2)
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EngineVersion {
+  id          String              @id @default(uuid())
+  version     String              @unique
+  status      EngineVersionStatus @default(DRAFT)
+  createdBy   String
+  createdAt   DateTime            @default(now())
+  activatedAt DateTime?
+  reason      String?
+
+  formulas     Formula[]
+  coefficients Coefficient[]
+}
+
+model Formula {
+  id              String   @id @default(uuid())
+  code            String
+  category        String
+  expression      String   @db.Text
+  readable        String   @db.Text
+  engineVersionId String
+
+  engineVersion EngineVersion @relation(fields: [engineVersionId], references: [id], onDelete: Cascade)
+
+  @@index([engineVersionId])
+}
+
+model Coefficient {
+  id              String  @id @default(uuid())
+  code            String
+  value           Decimal @db.Decimal(10, 4)
+  unit            String
+  engineVersionId String
+
+  engineVersion EngineVersion @relation(fields: [engineVersionId], references: [id], onDelete: Cascade)
+
+  @@index([engineVersionId])
+}
+
+model Calculation {
+  id            String          @id @default(uuid())
+  projectId     String
+  engineVersion String
+  version       Int             @default(1)
+  total         Decimal         @db.Decimal(14, 2)
+  confidence    ConfidenceLevel @default(HIGH)
+  createdAt     DateTime        @default(now())
+
+  project Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  items   CalculationItem[]
+
+  @@index([projectId])
+}
+
+model CalculationItem {
+  id            String   @id @default(uuid())
+  calculationId String
+  code          String
+  description   String
+  unit          String
+  quantity      Decimal  @db.Decimal(12, 3)
+  unitPrice     Decimal  @db.Decimal(14, 2)
+  total         Decimal  @db.Decimal(14, 2)
+  formula       String   @db.Text
+  inputsUsed    Json
+  sources       Json
+
+  calculation Calculation @relation(fields: [calculationId], references: [id], onDelete: Cascade)
+
+  @@index([calculationId])
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  userId         String
+  projectId      String?
+  subscriptionId String?
+  amount         Decimal       @db.Decimal(14, 2)
+  method         String
+  status         PaymentStatus @default(PENDING)
+  proofUrl       String?
+  reviewedBy     String?
+  reviewedAt     DateTime?
+  notes          String?
+  createdAt      DateTime      @default(now())
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project      Project?      @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  packages     Package[]
+
+  @@index([status])
+  @@index([userId])
+}
+
+model Subscription {
+  id           String             @id @default(uuid())
+  userId       String
+  planId       String
+  status       SubscriptionStatus @default(ACTIVE)
+  startDate    DateTime           @default(now())
+  renewalDate  DateTime
+  cancelledAt  DateTime?
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan     Plan      @relation(fields: [planId], references: [id], onDelete: Restrict)
+  payments Payment[]
+  invoices Invoice[]
+
+  @@index([userId])
+}
+
+model Plan {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  displayName  String
+  price        Decimal   @db.Decimal(12, 2)
+  credits      Int
+  maxUsers     Int
+  features     Json
+  badge        String?
+  active       Boolean   @default(true)
+  order        Int       @default(0)
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  packages     Package[]
+  subscriptions Subscription[]
+
+  @@index([active, order])
+}
+
+model Package {
+  id                String        @id @default(cuid())
+  userId            String
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId            String
+  plan              Plan          @relation(fields: [planId], references: [id])
+
+  totalCredits      Int
+  usedCredits       Int           @default(0)
+  remainingCredits  Int
+  status            PackageStatus @default(ACTIVE)
+
+  purchasedAt       DateTime      @default(now())
+  exhaustedAt       DateTime?
+  expiresAt         DateTime?
+
+  purchaseAmount    Decimal       @db.Decimal(12, 2)
+  paymentId         String?
+  payment           Payment?      @relation(fields: [paymentId], references: [id])
+  proofUrl          String?
+
+  createdBy         String?
+  notes             String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@index([userId, status])
+  @@index([status, remainingCredits])
+  @@index([planId])
+  @@index([purchasedAt])
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  userId         String
+  subscriptionId String
+  number         String        @unique
+  periodStart    DateTime
+  periodEnd      DateTime
+  amount         Decimal       @db.Decimal(14, 2)
+  status         InvoiceStatus @default(ISSUED)
+  pdfUrl         String?
+  createdAt      DateTime      @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Restrict)
+
+  @@index([number])
+  @@index([userId])
+}
+
+model Document {
+  id         String   @id @default(uuid())
+  projectId  String
+  type       String
+  fileUrl    String
+  uploadedBy String
+  createdAt  DateTime @default(now())
+
+  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  shareLinks ShareLink[]
+
+  @@index([projectId])
+}
+
+model ShareLink {
+  id          String    @id @default(uuid())
+  documentId  String
+  token       String    @unique
+  expiresAt   DateTime?
+  requireCode Boolean   @default(false)
+  code        String?
+  revokedAt   DateTime?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+
+  document Document      @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  accesses ShareAccess[]
+
+  @@index([token])
+}
+
+model ShareAccess {
+  id          String   @id @default(uuid())
+  shareLinkId String
+  ipHash      String
+  userAgent   String
+  accessedAt  DateTime @default(now())
+  event       String
+
+  shareLink ShareLink @relation(fields: [shareLinkId], references: [id], onDelete: Cascade)
+
+  @@index([shareLinkId])
+}
+
+model Notification {
+  id        String              @id @default(uuid())
+  userId    String
+  type      String
+  channel   NotificationChannel @default(IN_APP)
+  payload   Json
+  status    NotificationStatus  @default(PENDING)
+  sentAt    DateTime?
+  readAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  action    String
+  entity    String
+  entityId  String
+  before    Json?
+  after     Json?
+  reason    String?
+  createdAt DateTime @default(now())
+
+  admin User @relation("AdminAudits", fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ip        String?
+  userAgent String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+}
+
+model AiInteraction {
+  id        String   @id @default(uuid())
+  cacheKey  String   @unique
+  type      String
+  inputHash String
+  input     Json
+  response  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([cacheKey])
+  @@index([type])
+}

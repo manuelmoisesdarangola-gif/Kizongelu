@@ -1,0 +1,64 @@
+{
+  "migratedAt": "2026-10-09T10:50:08.236Z",
+  "totalMigrated": 2,
+  "packages": [
+    {
+      "id": "pkg_migrated_usr-pro-01_1791543008238",
+      "userId": "usr-pro-01",
+      "userEmail": "pro@kizongelu.ao",
+      "planId": "plan_profissional",
+      "planName": "profissional",
+      "displayName": "Profissional",
+      "totalCredits": 3,
+      "usedCredits": 0,
+      "remainingCredits": 3,
+      "status": "ACTIVE",
+      "purchasedAt": "2026-09-24T10:50:08.235Z",
+      "exhaustedAt": null,
+      "expiresAt": null,
+      "purchaseAmount": 15999,
+      "createdBy": "migration-2026-10-09",
+      "notes": "Migrado de subscrição sub_pro_01. Plano antigo: Profissional. Limite antigo: 5/mês. Créditos atribuídos: 3 (sem expiração).",
+      "createdAt": "2026-10-09T10:50:08.236Z",
+      "updatedAt": "2026-10-09T10:50:08.236Z"
+    },
+    {
+      "id": "pkg_migrated_usr-empresa-01_1791543008239",
+      "userId": "usr-empresa-01",
+      "userEmail": "empresa@kizongelu.ao",
+      "planId": "plan_empresa",
+      "planName": "empresa",
+      "displayName": "Empresa",
+      "totalCredits": 6,
+      "usedCredits": 0,
+      "remainingCredits": 6,
+      "status": "ACTIVE",
+      "purchasedAt": "2026-09-29T10:50:08.235Z",
+      "exhaustedAt": null,
+      "expiresAt": null,
+      "purchaseAmount": 29999,
+      "createdBy": "migration-2026-10-09",
+      "notes": "Migrado de subscrição sub_empresa_01. Plano antigo: Empresa. Limite antigo: 15/mês. Créditos atribuídos: 6 (sem expiração).",
+      "createdAt": "2026-10-09T10:50:08.236Z",
+      "updatedAt": "2026-10-09T10:50:08.236Z"
+    }
+  ],
+  "archivedSubscriptions": [
+    {
+      "id": "sub_pro_01",
+      "userId": "usr-pro-01",
+      "userEmail": "pro@kizongelu.ao",
+      "status": "CANCELLED",
+      "cancelledAt": "2026-10-09T10:50:08.236Z",
+      "notes": "Migrado para modelo de pacotes em 2026-10-09"
+    },
+    {
+      "id": "sub_empresa_01",
+      "userId": "usr-empresa-01",
+      "userEmail": "empresa@kizongelu.ao",
+      "status": "CANCELLED",
+      "cancelledAt": "2026-10-09T10:50:08.236Z",
+      "notes": "Migrado para modelo de pacotes em 2026-10-09"
+    }
+  ]
+}

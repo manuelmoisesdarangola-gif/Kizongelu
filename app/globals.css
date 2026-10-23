@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Design Tokens Kizongelu */
+    --color-primary: #0F3D5C;
+    --color-primary-light: #1A547C;
+    --color-primary-dark: #0A293E;
+    
+    --color-cta: #F59E0B;
+    --color-cta-hover: #D97706;
+    
+    --color-whatsapp: #25D366;
+    --color-whatsapp-hover: #1EBE5D;
+    
+    --color-success: #10B981;
+    --color-warning: #F59E0B;
+    --color-error: #EF4444;
+    
+    --color-bg: #F8FAFC;
+    --color-border: #E2E8F0;
+    --color-muted: #64748B;
+    --color-foreground: #0F172A;
+
+    /* Shadcn/ui CSS Variables */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 204 72% 21%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 38 92% 50%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 204 72% 21%;
+
+    --radius: 0.75rem; /* rounded-xl */
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+
+  html, body {
+    background-color: var(--color-bg);
+    color: var(--color-foreground);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    max-width: 100vw;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
+
+/* Otimização Mobile-First para Android: Scroll suave e ocultação de scrollbars ruidosas */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Prevenção de auto-zoom em inputs em dispositivos Android / WebViews */
+@media (max-width: 640px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
