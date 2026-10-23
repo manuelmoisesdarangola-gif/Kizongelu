@@ -14,16 +14,20 @@ export function getAppBasePath(): string {
   if (typeof window === 'undefined') return '';
   const pathname = window.location.pathname;
 
-  // 1. Detecção explícita de repositório Kizongelu
-  const match = pathname.match(/^\/([kK]izongelu)(?:\/|$)/);
+  // 1. Detecção explícita de repositório Kizongelu (com ou sem subpasta docs)
+  const match = pathname.match(/^\/([kK]izongelu)(?:\/docs)?(?:\/|$)/);
   if (match) {
-    return `/${match[1]}`;
+    const hasDocs = pathname.toLowerCase().startsWith(`/${match[1].toLowerCase()}/docs`);
+    return hasDocs ? `/${match[1]}/docs` : `/${match[1]}`;
   }
 
   // 2. Detecção genérica para domínios github.io
   if (window.location.hostname.endsWith('github.io')) {
     const segments = pathname.split('/').filter(Boolean);
     if (segments.length > 0) {
+      if (segments[1]?.toLowerCase() === 'docs') {
+        return `/${segments[0]}/docs`;
+      }
       return `/${segments[0]}`;
     }
   }

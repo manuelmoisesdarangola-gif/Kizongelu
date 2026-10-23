@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /painel
+Disallow: /painel/*
+Disallow: /projetos/*/preview
+Disallow: /plano
+Disallow: /definicoes
+
+Sitemap: https://kizongelu.ao/sitemap.xml

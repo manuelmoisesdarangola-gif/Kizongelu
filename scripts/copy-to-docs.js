@@ -1,0 +1,26 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const rootDir = path.resolve(__dirname, '..');
+const distDir = path.join(rootDir, 'dist');
+const docsDir = path.join(rootDir, 'docs');
+
+if (!fs.existsSync(distDir)) {
+  console.error('Dist directory does not exist. Run vite build first.');
+  process.exit(1);
+}
+
+// Clean and recreate docs directory
+if (fs.existsSync(docsDir)) {
+  fs.rmSync(docsDir, { recursive: true, force: true });
+}
+fs.mkdirSync(docsDir, { recursive: true });
+
+// Copy all files from dist to docs
+fs.cpSync(distDir, docsDir, { recursive: true });
+
+console.log('✅ Build successfully duplicated to /docs for GitHub Pages (Folder: /docs option)');

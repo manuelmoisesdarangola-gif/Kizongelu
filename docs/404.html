@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="utf-8">
+    <title>Kizongelu - Orçamentação para Angola</title>
+    <script>
+      // Redirecionamento SPA para GitHub Pages
+      // Preserva o subdirectório /Kizongelu/ e passa a rota requerida para o index.html
+      (function() {
+        var l = window.location;
+        var cleanSegments = l.pathname.split('/').filter(Boolean);
+        var isGitHubPages = l.hostname.endsWith('github.io') || (cleanSegments[0] && cleanSegments[0].toLowerCase() === 'kizongelu');
+        
+        var repoBase = isGitHubPages && cleanSegments.length > 0 ? '/' + cleanSegments[0] : '';
+        var routePath = cleanSegments.slice(isGitHubPages ? 1 : 0).join('/');
+
+        var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          repoBase + '/?/' + routePath +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash;
+
+        l.replace(redirectUrl);
+      })();
+    </script>
+  </head>
+  <body style="margin: 0; background-color: #F8FAFC; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #0F3D5C;">
+    <div style="text-align: center;">
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Kizongelu</h2>
+      <p style="font-size: 0.875rem; color: #64748B;">A carregar a plataforma...</p>
+    </div>
+  </body>
+</html>

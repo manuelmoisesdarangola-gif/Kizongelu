@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F3D5C"/>
+      <stop offset="100%" stop-color="#072235"/>
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  
+  <!-- Base Background Squircle with Safe Area Padding -->
+  <rect width="512" height="512" rx="115" fill="url(#brandGrad)"/>
+  
+  <!-- Subtle Blueprint Grid Pattern -->
+  <g opacity="0.08" stroke="#FFFFFF" stroke-width="2">
+    <line x1="64" y1="0" x2="64" y2="512"/>
+    <line x1="128" y1="0" x2="128" y2="512"/>
+    <line x1="192" y1="0" x2="192" y2="512"/>
+    <line x1="256" y1="0" x2="256" y2="512"/>
+    <line x1="320" y1="0" x2="320" y2="512"/>
+    <line x1="384" y1="0" x2="384" y2="512"/>
+    <line x1="448" y1="0" x2="448" y2="512"/>
+    
+    <line x1="0" y1="64" x2="512" y2="64"/>
+    <line x1="0" y1="128" x2="512" y2="128"/>
+    <line x1="0" y1="192" x2="512" y2="192"/>
+    <line x1="0" y1="256" x2="512" y2="256"/>
+    <line x1="0" y1="320" x2="512" y2="320"/>
+    <line x1="0" y1="384" x2="512" y2="384"/>
+    <line x1="0" y1="448" x2="512" y2="448"/>
+  </g>
+  
+  <!-- Iconic Construction Helmet & Architectural Calculation Glyph -->
+  <g filter="url(#shadow)" transform="translate(4, -8)">
+    <!-- Helmet Dome -->
+    <path d="M140 270 C140 180, 200 130, 252 130 C304 130, 364 180, 364 270 Z" fill="url(#amberGrad)"/>
+    <!-- Helmet Ridge -->
+    <path d="M236 130 C236 115, 268 115, 268 130 L268 270 L236 270 Z" fill="#FBBF24"/>
+    <!-- Helmet Visor / Rim -->
+    <path d="M110 270 C110 262, 125 258, 252 258 C379 258, 394 262, 394 270 C394 278, 370 286, 252 286 C134 286, 110 278, 110 270 Z" fill="#D97706"/>
+    
+    <!-- Stylized "K" for Kizongelu (Architectural Ruler Style) -->
+    <g fill="#FFFFFF" opacity="0.95">
+      <rect x="220" y="320" width="16" height="80" rx="4"/>
+      <path d="M236 355 L280 322 C285 318, 290 324, 286 328 L248 360 L292 396 C296 400, 290 406, 285 401 L236 366 Z"/>
+    </g>
+  </g>
+
+  <!-- Accent dot: Angola yellow/red subtle homage -->
+  <circle cx="256" cy="434" r="6" fill="#F59E0B"/>
+</svg>
