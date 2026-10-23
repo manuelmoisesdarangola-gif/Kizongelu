@@ -63,11 +63,13 @@ export function normalizeAppPath(
     const search = window.location.search;
     if (search.startsWith('?/')) {
       const queryRoute = search.slice(2).split('&')[0];
-      if (queryRoute) return `/${queryRoute}`.replace(/\/+/g, '/');
+      if (queryRoute && !queryRoute.toLowerCase().includes('docs')) {
+        return `/${queryRoute}`.replace(/\/+/g, '/');
+      }
     }
     const params = new URLSearchParams(search);
     const pParam = params.get('p');
-    if (pParam) {
+    if (pParam && !pParam.toLowerCase().includes('docs')) {
       return pParam.startsWith('/') ? pParam : `/${pParam}`;
     }
   }

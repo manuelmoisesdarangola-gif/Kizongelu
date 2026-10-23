@@ -18,23 +18,18 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <link rel="canonical" href="https://kizongelu.ao/" />
     
-    <!-- Script de Compatibilidade e Restauração SPA para GitHub Pages -->
+    <!-- Script de Restauração SPA para GitHub Pages com Limpeza de Loop -->
     <script>
       (function(l) {
-        // 1. Se estiver alojado no GitHub Pages a partir da raiz (sem Vite dev server) e a pasta docs existir
-        if (l.hostname.endsWith('github.io') && !l.pathname.toLowerCase().includes('/docs')) {
-          // Se estamos no index.html cru do repositório (com /src/main.tsx), redireciona para a versão compilada em /docs
-          var p = l.pathname;
-          if (!p.endsWith('/')) p += '/';
-          l.replace(l.origin + p + 'docs/' + l.search + l.hash);
-          return;
-        }
-
-        // 2. Restauração de rotas de página única (SPA) a partir de 404.html
         if (l.search && l.search[1] === '/') {
           var decoded = l.search.slice(1).split('&').map(function(s) { 
             return s.replace(/~and~/g, '&');
           }).join('?');
+          // Limpeza defensiva caso exista resíduo antigo de /docs no histórico do browser
+          if (decoded.indexOf('docs') !== -1) {
+            window.history.replaceState(null, null, l.pathname + l.hash);
+            return;
+          }
           window.history.replaceState(null, null,
             l.pathname.slice(0, -1) + decoded + l.hash
           );
