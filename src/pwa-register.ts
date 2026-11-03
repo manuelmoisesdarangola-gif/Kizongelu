@@ -6,8 +6,9 @@
 export function registerServiceWorker() {
   if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+      const swUrl = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/sw.js`;
       navigator.serviceWorker
-        .register('/sw.js')
+        .register(swUrl)
         .then((reg) => {
           console.log('[Kizongelu PWA] Service Worker registado com escopo:', reg.scope);
 

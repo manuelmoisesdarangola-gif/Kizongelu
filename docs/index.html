@@ -18,20 +18,15 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <link rel="canonical" href="https://kizongelu.ao/" />
     
-    <!-- Script de Restauração SPA para GitHub Pages com Limpeza de Loop -->
-    <script>
+    <!-- Single Page Apps for GitHub Pages -->
+    <script type="text/javascript">
       (function(l) {
-        if (l.search && l.search[1] === '/') {
+        if (l.search[1] === '/' ) {
           var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&');
+            return s.replace(/~and~/g, '&')
           }).join('?');
-          // Limpeza defensiva caso exista resíduo antigo de /docs no histórico do browser
-          if (decoded.indexOf('docs') !== -1) {
-            window.history.replaceState(null, null, l.pathname + l.hash);
-            return;
-          }
           window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + decoded + l.hash
+              l.pathname.slice(0, -1) + decoded + l.hash
           );
         }
       }(window.location));
@@ -78,12 +73,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&subset=latin,latin-ext&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-BEoaO4gs.js"></script>
-    <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-Dd_uD5pT.js">
-    <link rel="modulepreload" crossorigin href="./assets/vendor-pdf-B8BKv0MR.js">
-    <link rel="modulepreload" crossorigin href="./assets/vendor-react-BS2h52UJ.js">
-    <link rel="modulepreload" crossorigin href="./assets/vendor-query-C2oK_nP2.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-BafxWzyk.css">
+    <script type="module" crossorigin src="/Kizongelu/assets/index-CDmj17vO.js"></script>
+    <link rel="modulepreload" crossorigin href="/Kizongelu/assets/rolldown-runtime-Dd_uD5pT.js">
+    <link rel="modulepreload" crossorigin href="/Kizongelu/assets/vendor-pdf-B8BKv0MR.js">
+    <link rel="modulepreload" crossorigin href="/Kizongelu/assets/vendor-react-B7i53UOz.js">
+    <link rel="modulepreload" crossorigin href="/Kizongelu/assets/vendor-query-C2oK_nP2.js">
+    <link rel="stylesheet" crossorigin href="/Kizongelu/assets/index-BafxWzyk.css">
   </head>
   <body class="bg-[#F8FAFC] text-[#0F172A] font-['Inter',sans-serif] antialiased">
     <div id="root"></div>

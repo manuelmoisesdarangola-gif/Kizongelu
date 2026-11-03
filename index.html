@@ -18,20 +18,15 @@
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <link rel="canonical" href="https://kizongelu.ao/" />
     
-    <!-- Script de Restauração SPA para GitHub Pages com Limpeza de Loop -->
-    <script>
+    <!-- Single Page Apps for GitHub Pages -->
+    <script type="text/javascript">
       (function(l) {
-        if (l.search && l.search[1] === '/') {
+        if (l.search[1] === '/' ) {
           var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&');
+            return s.replace(/~and~/g, '&')
           }).join('?');
-          // Limpeza defensiva caso exista resíduo antigo de /docs no histórico do browser
-          if (decoded.indexOf('docs') !== -1) {
-            window.history.replaceState(null, null, l.pathname + l.hash);
-            return;
-          }
           window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + decoded + l.hash
+              l.pathname.slice(0, -1) + decoded + l.hash
           );
         }
       }(window.location));

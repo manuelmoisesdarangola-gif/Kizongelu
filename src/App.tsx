@@ -26,12 +26,12 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './auth/auth-context';
 import { ToastProvider, useToast } from './context/ToastContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { PWAInstallBanner } from './components/pwa/PWAInstallBanner';
-import { normalizeAppPath, buildExternalUrl } from './lib/router-utils';
 
 // 1. Layouts
 import { PublicLayout } from './layouts/PublicLayout';
@@ -168,14 +168,11 @@ const RedirectGuard: React.FC<{
 const MainRoutingManager: React.FC = () => {
   const { currentUser, isAuthenticated, logout } = useAuth();
   const { success } = useToast();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  // Estado Central de Rota (Normalizado para suportar GitHub Pages e subdirectórios)
-  const [currentPath, setCurrentPath] = useState<string>(() => {
-    if (typeof window !== 'undefined') {
-      return normalizeAppPath(window.location.pathname, window.location.hash);
-    }
-    return '/';
-  });
+  // Rota interna normalizada gerida pelo React Router (respeita o basename configurado)
+  const currentPath = location.pathname || '/';
 
   const [isNewBudgetModalOpen, setIsNewBudgetModalOpen] = useState(false);
   const [feedbackData, setFeedbackData] = useState<{ id: string; name: string } | null>(null);
@@ -183,22 +180,16 @@ const MainRoutingManager: React.FC = () => {
   // Gestão de Bloqueio por Falta de Créditos de Pacotes
   const [isQuotaExceededModalOpen, setIsQuotaExceededModalOpen] = useState(false);
 
-  // Navegação universal com sincronização do histórico do navegador e suporte a subdirectórios
-  const navigateTo = useCallback((path: string) => {
-    const normalizedTarget = normalizeAppPath(path);
-    const externalUrl = buildExternalUrl(normalizedTarget);
-    if (typeof window !== 'undefined') {
-      try {
-        if (window.location.pathname + window.location.search !== externalUrl) {
-          window.history.pushState({}, '', externalUrl);
-        }
-      } catch (e) {
-        // Fallback para sandbox/iframe
+  // Navegação universal com sincronização automática do React Router
+  const navigateTo = useCallback(
+    (path: string) => {
+      navigate(path);
+      if (typeof window !== 'undefined') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    setCurrentPath(normalizedTarget);
-  }, []);
+    },
+    [navigate]
+  );
 
   // Abre o Wizard guiado de 7 etapas a partir de um novo projectId
   const handleOpenNewBudget = useCallback(() => {
@@ -237,21 +228,15 @@ const MainRoutingManager: React.FC = () => {
     navigateTo(`/wizard/${newProjectId}/etapa-1`);
   }, [navigateTo]);
 
-  // Listener para botões retroceder/avançar do navegador e mudanças de hash
+  // Suporte a redireccionamento via hash caso aceda com #/rota
   useEffect(() => {
-    const handleLocationChange = () => {
-      if (typeof window !== 'undefined') {
-        const nextPath = normalizeAppPath(window.location.pathname, window.location.hash);
-        setCurrentPath(nextPath);
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const cleanHash = window.location.hash.replace(/^#\/?/, '/');
+      if (cleanHash && cleanHash !== '/' && cleanHash !== location.pathname) {
+        navigate(cleanHash, { replace: true });
       }
-    };
-    window.addEventListener('popstate', handleLocationChange);
-    window.addEventListener('hashchange', handleLocationChange);
-    return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-      window.removeEventListener('hashchange', handleLocationChange);
-    };
-  }, []);
+    }
+  }, [location.pathname, navigate]);
 
   // 3.3 SEO Dinâmico: Aplica <meta name="robots" content="noindex, nofollow"> em rotas privadas, wizard e previews
   useEffect(() => {
@@ -1156,22 +1141,24 @@ const MainRoutingManager: React.FC = () => {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <ToastProvider>
-            {/* Acessibilidade WCAG 2.1 AA: Skip to main content */}
-            <a href="#main-content" className="skip-link">
-              Saltar para o conteúdo principal
-            </a>
-            {/* Banner PWA "Instalar no telemóvel" após 2 visitas */}
-            <PWAInstallBanner />
-            <div id="main-content" tabIndex={-1} className="focus:outline-none">
-              <MainRoutingManager />
-            </div>
-          </ToastProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <BrowserRouter basename={import.meta.env.BASE_URL || '/'}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              {/* Acessibilidade WCAG 2.1 AA: Skip to main content */}
+              <a href="#main-content" className="skip-link">
+                Saltar para o conteúdo principal
+              </a>
+              {/* Banner PWA "Instalar no telemóvel" após 2 visitas */}
+              <PWAInstallBanner />
+              <div id="main-content" tabIndex={-1} className="focus:outline-none">
+                <MainRoutingManager />
+              </div>
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 }

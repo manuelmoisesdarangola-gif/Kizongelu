@@ -29,16 +29,17 @@ app.get('/health', (req, res) => {
 });
 
 // Servir ficheiros estáticos da build do Vite
-app.use(
-  express.static(distPath, {
-    maxAge: '1d',
-    setHeaders: (res, filePath) => {
-      if (filePath.endsWith('.html')) {
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-      }
-    },
-  })
-);
+const staticOptions = {
+  maxAge: '1d',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  },
+};
+
+app.use('/Kizongelu', express.static(distPath, staticOptions));
+app.use(express.static(distPath, staticOptions));
 
 // Fallback universal para Single Page Application (SPA)
 app.get('*', (req, res) => {
